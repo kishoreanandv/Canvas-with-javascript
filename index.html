@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dawing Board</title>
+    <style>
+      body {
+        margin: 0;
+        height: 0;
+        box-sizing: border-box;
+      }
+      h1 {
+        text-align: center;
+        margin-left: 20px;
+      }
+      canvas {
+        border: 6px solid #0984e3;
+        background: #dfe6e9;
+      }
+
+      .container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: linear-gradient(to right, #c31432, #240b36);
+      }
+      .reset {
+        padding: 10px;
+        cursor: pointer;
+        margin-right: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>DRAWING BOARD</h1>
+      <button type="buton" class="reset">RESET</button>
+    </div>
+    <canvas id="drawing" width="1000px" height="600px"></canvas>
+    <script>
+      // initialization
+      const canvas = document.querySelector("#drawing");
+      const button = document.querySelector(".reset");
+      const con = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      // con.strokeStyle = "#e17055";
+      con.lineJoin = "round";
+      con.lineCap = "round";
+      con.lineWidth = 20;
+      // Flag
+      let drawing = false;
+      //  starting point of drawing
+      let lastX = 0;
+      let lastY = 0;
+      let hue = 0;
+      let lineSize = true;
+
+      function draw(e) {
+        if (!drawing) return;
+        con.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+        con.beginPath();
+        con.moveTo(lastX, lastY);
+        con.lineTo(e.offsetX, e.offsetY);
+        //  this method needed to draw
+        con.stroke();
+        // destructuring Array
+        [lastX, lastY] = [e.offsetX, e.offsetY];
+        hue++;
+        if (hue >= 360) {
+          hue = 0;
+        }
+        if (con.lineWidth >= 100 || con.lineWidth <= 1) {
+          lineSize = !lineSize;
+        }
+
+        if (lineSize) {
+          con.lineWidth++;
+        } else {
+          con.lineWidth--;
+        }
+      }
+      canvas.addEventListener("mousemove", draw);
+      canvas.addEventListener("mousedown", (e) => {
+        drawing = true;
+        [lastX, lastY] = [e.offsetX, e.offsetY];
+      });
+      canvas.addEventListener("mouseup", () => (drawing = false));
+      canvas.addEventListener("mouseout", () => (drawing = false));
+      button.addEventListener("click", () => {
+        con.clearRect(0, 0, canvas.width, canvas.width);
+      });
+    </script>
+  </body>
+</html>
